@@ -50,7 +50,7 @@ public class ExtensionApp extends App {
 				PoliceCall call =  new PoliceCall(this.getDevice().getOwner(), player.getX(), player.getY(), player.getZ(), reason);
 
 				reasonInput.setInput("");
-				
+				this.getDevice().closeDevice();
 				ExampleMod.channel.sendToServer(new CallPolice(call));
 			}
 
