@@ -1,11 +1,15 @@
 package com.example.examplemod;
 
+import com.example.api.PoliceCall;
+import com.example.examplemod.network.client.CallPolice;
 import com.podloot.eyemod.gui.apps.App;
 import com.podloot.eyemod.lib.gui.util.Line;
 import com.podloot.eyemod.lib.gui.widgets.EyeButton;
 import com.podloot.eyemod.lib.gui.widgets.EyeLabel;
 import com.podloot.eyemod.lib.gui.widgets.EyeTextField;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 
 public class ExtensionApp extends App {
@@ -40,7 +44,14 @@ public class ExtensionApp extends App {
 				errorPanel.hide(false);
 			} else {
 				System.out.println(reason);
+				Minecraft mc = this.getDevice().getMinecraft();
+				LocalPlayer player = mc.player;
+
+				PoliceCall call =  new PoliceCall(this.getDevice().getOwner(), player.getX(), player.getY(), player.getZ(), reason);
+
 				reasonInput.setInput("");
+				
+				ExampleMod.channel.sendToServer(new CallPolice(call));
 			}
 
 		});
