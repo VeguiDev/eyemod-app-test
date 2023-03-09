@@ -34,35 +34,41 @@ public class CallPoliceServerHandler {
 
         PoliceCall call = message.getPoliceCall();
 
-        System.out.println("Issuer: "+call.issuer+" Reason: "+call.reason);
+        System.out.println("Issuer: " + call.issuer + " Reason: " + call.reason);
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 
-        List<ServerPlayer> players = server.getPlayerList().getPlayers();
-        
-        List<ServerPlayer> policies = new ArrayList<ServerPlayer>();
+        PlayerTeam team = server.getScoreboard().getPlayerTeam("police");
 
-        // Filter online players those who are not police and send notification.
-        for(int i = 0; i < players.size(); i++) {
+        if (team == null) {
+            System.out.println("The team 'police' not exists.");
+            return;
+        }
 
-            ServerPlayer player = players.get(i);
-            
-            if(player.getTeam().getName().equalsIgnoreCase("police")) {
-                policies.add(player);
+        List<String> playersName = new ArrayList<String>(team.getPlayers());
+
+        PlayerList list = server.getPlayerList();
+
+        for (int i = 0; i < playersName.size(); i++) {
+
+            ServerPlayer player = list.getPlayerByName(playersName.get(i));
+
+            if (player != null) {
 
                 JsonArray jsonMsg = new JsonArray();
 
                 JsonObject calledMessage = new JsonObject();
 
-                calledMessage.addProperty("text", call.issuer+" is calling to the police.\n");
+                calledMessage.addProperty("text", call.issuer + " is calling to the police.\n");
 
                 JsonObject reasonMSG = new JsonObject();
 
-                reasonMSG.addProperty("text", "Reason: "+call.reason+"\n");
+                reasonMSG.addProperty("text", "Reason: " + call.reason + "\n");
 
                 JsonObject coordsMSG = new JsonObject();
 
-                coordsMSG.addProperty("text", "X: "+Math.round(call.x)+" Y: "+Math.round(call.y)+" Z: "+Math.round(call.z));
+                coordsMSG.addProperty("text",
+                        "X: " + Math.round(call.x) + " Y: " + Math.round(call.y) + " Z: " + Math.round(call.z));
 
                 jsonMsg.add(calledMessage);
                 jsonMsg.add(reasonMSG);
@@ -75,8 +81,6 @@ public class CallPoliceServerHandler {
             }
 
         }
-        
-        
 
     }
 }
